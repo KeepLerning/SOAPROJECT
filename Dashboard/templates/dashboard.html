@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Aplikasi Pemantauan Saham</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding-top: 80px;
+            background: linear-gradient(135deg, #0d0d0d, #1f1f1f);
+            color: #e0e0e0;
+        }
+
+        header {
+            text-align: center;
+            color: #00f7ff;
+            margin-bottom: 20px;
+        }
+
+               nav {
+            padding: 20px;
+            position: fixed;
+            top: 0;
+            margin-right: 100px;
+            right: 0;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+        }
+
+        nav ul {
+            list-style-type: none;
+            display: flex;
+            gap: 30px;
+            padding: 0;
+            margin: 0;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: #00f7ff;
+            font-weight: bold;
+            padding: 10px 20px;
+            transition: all 0.3s ease;
+            border-radius: 4px;
+        }
+
+        nav a:hover {
+            background: rgba(0, 255, 247, 0.3);
+            color: #fff;
+            transform: scale(1.1);
+        }
+
+        .logout-button {
+            background-color: #f44336;
+            border: none;
+            color: white;
+            margin-top:-5px;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+            position: absolute;
+            right: -50px;
+            top: 20px;
+            box-shadow: 0 0 10px rgba(244, 67, 54, 0.5);
+        }
+
+        .logout-button:hover {
+            background-color: #c62828;
+            transform: scale(1.1);
+        }
+        main {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            color: #fff;
+        }
+
+        h1, h2 {
+            text-align: center;
+            color: #00f7ff;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 0 15px rgba(0, 255, 247, 0.3);
+            margin-top: 20px;
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        th {
+            background-color: rgba(0, 255, 247, 0.2);
+            font-weight: 500;
+            color: #00f7ff;
+        }
+
+        tr:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+
+        td a {
+            color: #00f7ff;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        footer {
+            text-align: center;
+            padding: 10px;
+            background-color: rgba(0, 0, 0, 0.8);
+            color: #00f7ff;
+            font-size: 0.9em;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    {% load humanize %}
+    {% load currency_filters %}
+    
+    <header>
+        <h1>Dashboard Saham</h1>
+    </header>
+    <nav>
+        <ul>
+            <li><a href="{% url 'home' %}">Home</a></li>
+            <li><a href="{% url 'stocks' %}">Daftar Saham</a></li>
+            <li><a href="{% url 'watchlist' %}">Watchlist</a></li>
+            <li><a href="{% url 'alerts' %}">Alerts</a></li>
+            <li><a href="{% url 'news' %}">Berita</a></li>
+        </ul>
+        <form action="{% url 'logout' %}" method="post">
+            {% csrf_token %}
+            <button type="submit" class="logout-button">Logout</button>
+        </form>
+    </nav>
+
+    <main>
+        <section>
+            <h2>Berita Saham Terkini</h2>
+            <div id="news-section">
+                {% if latest_news %}
+                    <ul>
+                        {% for article in latest_news %}
+                            <li>
+                                <h3><a href="{% url 'news_detail' article.id %}">{{ article.title }}</a></h3>
+                                <p>{{ article.summary|truncatewords:30 }}</p>
+                                <p><small>{{ article.published_at|date:"d M Y" }}</small></p>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p>Tidak ada berita terkini.</p>
+                {% endif %}
+            </div>
+        </section>
+
+        <section>
+            <h2>Data Saham Terbaru</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Simbol</th>
+                        <th>Nama Perusahaan</th>
+                        <th>Sektor</th>
+                        <th>Harga (USD)</th>
+                        <th>Market Cap</th>
+                        <th>52-Week High</th>
+                        <th>52-Week Low</th>
+                    </tr>
+                </thead>
+                <tbody id="stock-table-body">
+                    {% for stock in stocks %}
+                    <tr id="stock-{{ stock.id }}">
+                        <td>{{ stock.symbol }}</td>
+                        <td>{{ stock.company_name }}</td>
+                        <td>{{ stock.sector }}</td>
+                        <td>${{ stock.current_price|intcomma|default:"N/A" }}</td>
+                        <td>${{ stock.market_cap|intcomma|default:"N/A" }}</td>
+                        <td>${{ stock.high_52_week|intcomma|default:"N/A" }}</td>
+                        <td>${{ stock.low_52_week|intcomma|default:"N/A" }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7">Tidak ada saham yang tersedia.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Aplikasi Pemantauan Saham. Semua hak dilindungi.</p>
+    </footer>
+    
+    <script>
+        function updateStockData() {
+            $.ajax({
+                url: "{% url 'get_stock_data' %}",
+                method: "GET",
+                success: function(data) {
+                    data.forEach(stock => {
+                        const row = $("#stock-" + stock.id);
+                        if (row.length) {
+                            row.find("td:nth-child(4)").text("$" + stock.current_price.toLocaleString());
+                            row.find("td:nth-child(5)").text("$" + stock.market_cap.toLocaleString());
+                            row.find("td:nth-child(6)").text("$" + stock.high_52_week.toLocaleString());
+                            row.find("td:nth-child(7)").text("$" + stock.low_52_week.toLocaleString());
+                        }
+                    });
+                },
+                error: function(error) {
+                    console.error("Error fetching stock data:", error);
+                }
+            });
+        }
+        setInterval(updateStockData, 60000);
+    </script>
+</body>
+</html>

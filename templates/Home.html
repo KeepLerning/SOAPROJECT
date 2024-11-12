@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home NASDAQ 100</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding-top: 60px;
+            background: linear-gradient(135deg, #0d0d0d, #1f1f1f);
+            color: #e0e0e0;
+        }
+
+        header {
+            text-align: center;
+            color: #00f7ff;
+        }
+
+        nav {
+            padding: 10px;
+            position: fixed;
+            top: 0;
+            right: 0;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+        }
+
+        nav ul {
+            list-style-type: none;
+            display: flex;
+            gap: 40px;
+            padding: 0;
+            margin-top: 20px;
+            margin-right: 100px;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: #00f7ff;
+            font-weight: bold;
+            padding: 10px 20px;
+            transition: all 0.3s ease;
+            border-radius: 4px;
+        }
+
+        nav a:hover {
+            background: rgba(0, 255, 247, 0.3);
+            color: #fff;
+            transform: scale(1.1);
+        }
+        .navbar-logo img {
+            height: 50px; 
+            margin-top:-250px;
+            margin-right: 1200px; /* Spacing between logo and menu */
+        }
+
+        .login-button {
+            font-family: 'Poppins', sans-serif;
+            background: rgba(0, 255, 247, 0.3);
+            border: none;
+            color: white;
+            margin-top:1px;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            box-shadow: 0 0 10px rgba(244, 67, 54, 0.5);
+        }
+
+        .login-button:hover {
+            background: rgba(0, 255, 257, 0.3);
+            transform: scale(1.1);
+        }
+
+        main {
+            margin: 30px auto;
+            max-width: 1200px;
+            color: #fff;
+        }
+
+        h1 {
+            font-weight: 700;
+            color: #00f7ff;
+            text-align: center;
+            margin-top:70px;
+            margin-bottom: 20px;
+            font-size:40px;
+        }
+        h2 {
+            font-weight: 700;
+            color: #00f7ff;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 0 15px rgba(0, 255, 247, 0.3);
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            transition: background-color 0.3s ease;
+        }
+
+        th {
+            background-color: rgba(0, 255, 247, 0.2);
+            font-weight: 500;
+            color: #00f7ff;
+        }
+
+        tr:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+
+        td a {
+            color: #00f7ff;
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.3s ease;
+        }
+
+        td a:hover {
+            color: #ff00c1;
+        }
+
+        footer {
+            text-align: center;
+            padding: 10px;
+            color: #00f7ff;
+            font-size: 0.9em;
+            bottom: 0;
+            left: 0;
+            right: 0;
+        }
+
+        /* New section styles for NASDAQ 100 */
+        .market-section {
+            margin-top: 40px;
+            padding: 20px;
+            background: #1a1a1a;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .market-overview {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .market-metrics {
+            text-align: center;
+            color: #00f7ff;
+        }
+
+        .market-metrics h3 {
+            font-size: 24px;
+            margin: 0;
+            color: #ffffff;
+        }
+
+        .market-metrics p {
+            font-size: 14px;
+            margin: 5px 0;
+            color: #a0a0a0;
+        }
+
+        .stock-table {
+            width: 100%;
+            border-collapse: collapse;
+            color: #e0e0e0;
+        }
+
+        .stock-table th, .stock-table td {
+            padding: 10px;
+            border-bottom: 1px solid #333;
+            text-align: left;
+        }
+
+        .stock-table th {
+            background-color: #2a2a2a;
+            font-weight: bold;
+        }
+
+        .stock-table tr:nth-child(even) {
+            background-color: #2a2a2a;
+        }
+
+        .stock-name {
+            display: flex;
+            align-items: center;
+        }
+
+        .stock-icon {
+            width: 20px;
+            height: 20px;
+            margin-right: 8px;
+        }
+
+        .price-change {
+            color: #00ff7f; /* Green for positive */
+        }
+
+        .price-change.negative {
+            color: #ff6b6b; /* Red for negative */
+        }
+        .positive {
+        color: green;
+        font-weight: bold;
+    }
+    .negative {
+        color: red;
+        font-weight: bold;
+    }
+    .icon-up::before {
+        content: "▲";
+        margin-right: 4px;
+    }
+    .icon-down::before {
+        content: "▼";
+        margin-right: 4px;
+    }
+    .highlights-section {
+    margin-top: 40px;
+    padding: 20px;
+    background: #2a2a2a;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.market-data {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.market-cap, .trading-volume {
+    background: linear-gradient(135deg, #0d0d0d, #1f1f1f);
+    padding: 10px;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    flex: 1;
+    margin: 0 10px;
+    text-align: center;
+}
+
+.trending-stocks {
+    margin-top: 20px;
+    margin-right:610px;
+    padding: 20px;
+    background: linear-gradient(135deg, #0d0d0d, #1f1f1f);
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.largest-gainers {
+    margin-top: -240px;
+    margin-left: 610px;
+    padding: 20px;
+    background: linear-gradient(135deg, #0d0d0d, #1f1f1f);
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+.trending-stocks h2, .largest-gainers h2 {
+    margin-bottom: 15px;
+    
+}
+
+.trending-stocks ul, .largest-gainers ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.trending-stocks li, .largest-gainers li {
+    padding: 10px 0;
+    font-size: 16px;
+    
+}
+
+
+    </style>
+</head>
+<body>
+    {% load static %}
+    <header>
+        {% comment %} <a href="/" class="navbar-logo"><img src="static/img/logo.png" alt="Logo" /></a> {% endcomment %}
+        <h1>Welcome to NASDAQ 100 Stocks Monitoring App</h1>
+        <nav>
+            <ul>
+                <li><a href="{% url 'home' %}">Home</a></li>
+                <li><a href="{% url 'dashboard' %}">Dashboard</a></li>
+                <li><a href="{% url 'watchlist' %}">Watchlist</a></li>
+                <li><a href="{% url 'alerts' %}">Alerts</a></li>
+                <li><a href="{% url 'news' %}">News</a></li>
+                <form action="{% url 'login' %}">
+                    <button class="login-button">Login</button>
+                </form>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section>
+            <p>
+                This application is designed to provide a comprehensive and intuitive stock monitoring experience.
+                With real-time features, you can track NASDAQ 100 stock prices live and gain in-depth market movement analysis.
+                Customize alerts for significant price fluctuations and create a watchlist for your favorite stocks for easy access.
+            </p>
+        </section>
+            <section class="market-data">
+        <div class="market-cap">
+            <h2>{{ market_cap }}</h2>
+            <p>Market Cap</p>
+            <p style="color: red;">Change: -1.0%</p>
+        </div>
+        <div class="trading-volume">
+            <h2>{{ trading_volume }}</h2>
+            <p>24h Trading Volume</p>
+            <p style="color: green;">Change: +7.0%</p>
+        </div>
+    </section>
+
+    <section class="trending-stocks">
+        <h2>Trending Stocks</h2>
+        <ul>
+            {% for stock in trending_stocks %}
+                <li>
+                    {{ stock.symbol }} - {{ stock.price }} <span style="color: green;">{{ stock.change }}</span>
+                </li>
+            {% endfor %}
+        </ul>
+        {% comment %} <a href="#">View more</a> {% endcomment %}
+    </section>
+
+    <section class="largest-gainers">
+        <h2>Largest Gainers</h2>
+        <ul>
+            {% for stock in largest_gainers %}
+                <li>
+                    {{ stock.symbol }} - {{ stock.price }} <span style="color: green;">{{ stock.change }}</span>
+                </li>
+            {% endfor %}
+        </ul>
+        {% comment %} <a href="#">View more</a> {% endcomment %}
+    </section>
+        <!-- New NASDAQ 100 Section -->
+        <main>
+                        <section>
+                <h2>Top 10 Nasdaq Stocks</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Symbol</th>
+                            <th>Price (USD)</th>
+                            <th>Market Cap</th>
+                            <th>52-Week High</th>
+                            <th>52-Week Low</th>
+                            <th>Change 1D (%)</th>
+                            <th>Change 1W (%)</th>
+                            <th>Change 1M (%)</th>
+                            <th>Change 1Y (%)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for stock in nasdaq_stocks %}
+                            <tr>
+                                <td>{{ stock.symbol }}</td>
+                                <td>${{ stock.current_price }}</td>
+                                <td>${{ stock.market_cap }}</td>
+                                <td>${{ stock.high_52_week }}</td>
+                                <td>${{ stock.low_52_week }}</td>
+                                <td class="{% if stock.change_1d > 0 %}positive icon-up{% elif stock.change_1d < 0 %}negative icon-down{% endif %}">
+                        {{ stock.change_1d }}%
+                    </td>
+                    
+                    <!-- Change 1W -->
+                    <td class="{% if stock.change_1w > 0 %}positive icon-up{% elif stock.change_1w < 0 %}negative icon-down{% endif %}">
+                        {{ stock.change_1w }}%
+                    </td>
+                    
+                    <!-- Change 1M -->
+                    <td class="{% if stock.change_1m > 0 %}positive icon-up{% elif stock.change_1m < 0 %}negative icon-down{% endif %}">
+                        {{ stock.change_1m }}%
+                    </td>
+                    
+                    <!-- Change 1Y -->
+                    <td class="{% if stock.change_1y > 0 %}positive icon-up{% elif stock.change_1y < 0 %}negative icon-down{% endif %}">
+                        {{ stock.change_1y }}%
+                    </td>
+                </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </section>  
+    </main>  
+    <footer>
+        <p>&copy; 2024 Aplikasi Pemantauan Saham. Semua hak dilindungi.</p>
+    </footer>
+</body>
+</html>

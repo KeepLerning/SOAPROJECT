@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Watchlist Saya</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #0d0d0d, #1f1f1f);
+            color: #e0e0e0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+
+
+        nav {
+            padding: 20px;
+            position: fixed;
+            top: 0;
+            right: 0;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+        }
+
+        nav ul {
+            list-style-type: none;
+            display: flex;
+            gap: 20px;
+            padding: 0;
+            margin-right: 100px;
+            margin-top: 10px;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: #00f7ff;
+            font-weight: bold;
+            padding: 10px 20px;
+            transition: all 0.3s ease;
+            border-radius: 4px;
+        }
+
+        nav a:hover {
+            background: rgba(0, 255, 247, 0.3);
+            color: #fff;
+            transform: scale(1.1);
+        }
+
+        .logout-button {
+            background-color: #f44336;
+            border: none;
+            color: white;
+            margin-top:2px;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+            position: absolute;
+            right: 30px;
+            top: 20px;
+            box-shadow: 0 0 10px rgba(244, 67, 54, 0.5);
+        }
+
+        .logout-button:hover {
+            background-color: #c62828;
+            transform: scale(1.1);
+        }
+        main {
+            flex: 1;
+            width: 90%;
+            max-width: 900px;
+            padding: 20px;
+            margin-top: 90px;
+        }
+
+        section h2 {
+            color: #00f7ff;
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #444;
+        }
+
+        th {
+            background-color: rgba(0, 0, 0, 0.6);
+            color: #00f7ff;
+        }
+
+        tr:hover {
+            background-color: rgba(0, 255, 255, 0.1);
+        }
+
+        td a {
+            color: #00f7ff;
+            text-decoration: none;
+        }
+
+        td a:hover {
+            color: #00bcd4;
+            text-decoration: underline;
+        }
+
+        .current-price {
+            color: #ffeb3b; /* warna yang menonjol untuk harga terkini */
+            font-weight: bold;
+        }
+
+        footer {
+            width: 100%;
+            text-align: center;
+            padding: 10px;
+            background-color: rgba(0, 0, 0, 0.8);
+            color: #e0e0e0;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    {% load humanize %}
+    {% load currency_filters %}
+    <header>
+        <nav>
+            <ul>
+                <li><a href="{% url 'home' %}">Home</a></li>
+                <li><a href="{% url 'stocks' %}">Daftar Saham</a></li>
+                <li><a href="{% url 'watchlist' %}">Watchlist</a></li>
+                <li><a href="{% url 'alerts' %}">Alerts</a></li>
+                <li><a href="{% url 'news' %}">Berita</a></li>
+                <form action="{% url 'logout' %}" method="post" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="logout-button">Logout</button>
+                </form>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section>
+            <h2>Daftar Saham di Watchlist</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Simbol</th>
+                        <th>Nama Perusahaan</th>
+                        <th>Harga Terkini</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+                <tbody id="watchlist-table-body">
+                    {% for item in watchlist %}
+                    <tr data-stock-id="{{ item.id }}">
+                        <td>{{ item.symbol }}</td>
+                        <td><a href="{% url 'stock_detail' item.id %}">{{ item.company_name }}</a></td>
+                        <td class="current-price">
+                            {{ item.current_price|intcomma|default:"Harga tidak tersedia" }}
+                        </td>
+                        <td>
+                            <a href="{% url 'remove_from_watchlist' item.id %}">Hapus dari Watchlist</a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4" style="text-align: center;">Watchlist Anda kosong.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </section>
+    </main>
+            {% comment %} {% if messages %}
+            <div class="messages">
+                {% for message in messages %}
+                    <p>{{ message }}</p>
+                {% endfor %}
+            </div>
+        {% endif %} {% endcomment %} 
+    <footer>
+        <p>&copy; 2024 Aplikasi Pemantauan Saham. Semua hak dilindungi.</p>
+    </footer>
+
+    <script>
+        // Function to fetch and update prices
+        function updatePrices() {
+            fetch("{% url 'get_real_time_prices' %}")
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data);  // Check the response to see if it contains 'None' values or missing keys
+                    data.prices.forEach(item => {
+                        const row = document.querySelector(`tr[data-stock-id="${item.id}"]`);
+                        if (row) {
+                            const priceCell = row.querySelector('.current-price');
+                            priceCell.textContent = item.current_price
+                                ? parseFloat(item.current_price).toLocaleString("id-ID", {style: "currency", currency: "IDR"})
+                                : "Harga tidak tersedia";
+                        }
+                    });
+                })
+                .catch(error => console.error("Error fetching prices:", error));
+        }
+
+        // Refresh prices every 30 seconds
+        setInterval(updatePrices, 30000);
+        updatePrices();  // Initial call to load prices immediately
+    </script>
+</body>
+</html>

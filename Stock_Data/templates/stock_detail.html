@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detail Saham - {{ stock.symbol }}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding-top: 60px;
+            background: linear-gradient(135deg, #0d0d0d, #1f1f1f);
+            color: #e0e0e0;
+        }
+        header {
+            text-align: center;
+            color: #00f7ff;
+        }
+
+        nav {
+            padding: 20px;
+            position: fixed;
+            top: 0;
+            margin-right: 100px;
+            right: 0;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+        }
+
+        nav ul {
+            list-style-type: none;
+            display: flex;
+            gap: 30px;
+            padding: 0;
+            margin: 0;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: #00f7ff;
+            font-weight: bold;
+            padding: 10px 20px;
+            transition: all 0.3s ease;
+            border-radius: 4px;
+        }
+
+        nav a:hover {
+            background: rgba(0, 255, 247, 0.3);
+            color: #fff;
+            transform: scale(1.1);
+        }
+
+        .logout-button {
+            background-color: #f44336;
+            border: none;
+            color: white;
+            margin-top:-5px;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+            position: absolute;
+            right: -50px;
+            top: 20px;
+            box-shadow: 0 0 10px rgba(244, 67, 54, 0.5);
+        }
+
+        .logout-button:hover {
+            background-color: #c62828;
+            transform: scale(1.1);
+        }
+
+        main {
+            margin: 20px auto;
+            max-width: 1200px;
+            color: #fff;
+        }
+
+        h2 {
+            font-weight: 700;
+            color: #00f7ff;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .stock-details, .price-history {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 0 15px rgba(0, 255, 247, 0.3);
+        }
+
+        .chart-container {
+            position: relative;
+            height: 400px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            transition: background-color 0.3s ease;
+        }
+
+        th {
+            background-color: rgba(0, 255, 247, 0.2);
+            font-weight: 500;
+            color: #00f7ff;
+        }
+
+        tr:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+
+        td a {
+            color: #00f7ff;
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.3s ease;
+        }
+
+        td a:hover {
+            color: #ff00c1;
+        }
+
+        footer {
+            text-align: center;
+            padding: 10px;
+            background-color: rgba(0, 0, 0, 0.8);
+            color: #00f7ff;
+            font-size: 0.9em;
+            bottom: 0;
+            left: 0;
+            right: 0;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    {% load humanize %}
+    {% load currency_filters %}
+    
+    <header>
+        <h1>Detail Saham:{{ stock.symbol }}</h1>
+        <nav>
+            <ul>
+                <li><a href="{% url 'home' %}">Home</a></li>
+                <li><a href="{% url 'stocks' %}">Daftar Saham</a></li>
+                <li><a href="{% url 'watchlist' %}">Watchlist</a></li>
+                <li><a href="{% url 'alerts' %}">Alerts</a></li>
+                <li><a href="{% url 'news' %}">Berita</a></li>
+                <form action="{% url 'logout' %}" method="post" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="logout-button">Logout</button>
+                </form>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="stock-details">
+            <h2>Informasi Saham</h2>
+            <div class="stock-info">
+                <p><strong>Nama:</strong> {{ stock.symbol }}</p>
+                <p><strong>ID Saham:</strong> {{ stock.id }}</p>
+                <p><strong>Harga Terkini:</strong> ${{ current_price|intcomma|default:"Tidak tersedia" }}</p>
+                {% comment %} <p><strong>Data 1:</strong> {{ data_1 }}</p> <!-- Ganti data_1 dengan data relevan -->
+                <p><strong>Data 2:</strong> {{ data_2 }}</p> <!-- Ganti data_2 dengan data relevan --> {% endcomment %}
+            </div>
+
+            <div class="chart-container">
+                <canvas id="stockChart"></canvas>
+            </div>
+        </section>
+
+        <section class="price-history">
+            <h3>Riwayat Harga</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Tanggal</th>
+                        <th>Harga</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for history in stock.price_history.all %}
+                    <tr>
+                        <td>{{ history.date }}</td>
+                        <td>${{ current_price|intcomma|default:"Tidak tersedia" }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="2">Tidak ada riwayat harga tersedia.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Aplikasi Pemantauan Saham. Semua hak dilindungi.</p>
+    </footer>
+    <script>
+        // Inisialisasi Grafik Saham
+        const ctx = document.getElementById("stockChart").getContext("2d");
+        const stockChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: [], // Label kosong untuk waktu
+                datasets: [{
+                    label: 'Harga Terkini',
+                    data: [], // Data harga kosong awal
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderWidth: 2,
+                    pointRadius: 3,
+                    pointHoverRadius: 5,
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: { title: { display: true, text: 'Waktu' } },
+                    y: { title: { display: true, text: 'Harga (Rp)' } }
+                }
+            }
+        });
+
+        // Fungsi untuk memperbarui data grafik dengan harga terbaru
+        function updateChartData(price) {
+            const currentTime = new Date().toLocaleTimeString();
+            stockChart.data.labels.push(currentTime);
+            stockChart.data.datasets[0].data.push(price);
+
+            // Hapus data lama jika lebih dari 20 titik
+            if (stockChart.data.labels.length > 20) {
+                stockChart.data.labels.shift();
+                stockChart.data.datasets[0].data.shift();
+            }
+            stockChart.update();
+        }
+
+        // Fungsi untuk mengambil data harga real-time dari Yahoo Finance
+        function updateRealTimePrice() {
+            const proxyUrl = "https://cors-anywhere.herokuapp.com/";
+            const yahooFinanceUrl = `https://query1.finance.yahoo.com/v8/finance/chart/{{ stock.symbol }}?region=US&lang=en-US&includePrePost=false&interval=1m&range=1d`;
+
+            $.ajax({
+                url: proxyUrl + yahooFinanceUrl,
+                method: "GET",
+                success: function(response) {
+                    const result = response.chart.result[0];
+                    if (result && result.meta.regularMarketPrice) {
+                        const price = parseFloat(result.meta.regularMarketPrice);
+                        document.getElementById('current-price').textContent = `$${price.toLocaleString()}`;
+                        updateChartData(price);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error("Terjadi kesalahan saat mengambil harga real-time dari Yahoo Finance:", error);
+                }
+            });
+        }
+
+        // Memperbarui harga setiap 10 detik
+        setInterval(updateRealTimePrice, 10000);
+
+        // Panggil fungsi sekali di awal untuk mendapatkan data langsung
+        updateRealTimePrice();
+    </script>
+</body>
+</html>
