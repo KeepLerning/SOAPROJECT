@@ -2,9 +2,8 @@ from django.shortcuts import get_object_or_404
 from django.views.generic import ListView, DetailView
 from django.http import JsonResponse
 from .models import Stock, StockPriceHistory
-from .utils import get_stock_data  # Import the updated get_stock_data function
+from .utils import get_stock_data 
 
-# List view for all stocks
 class StockListView(ListView):
     model = Stock
     template_name = 'stocks.html'
@@ -16,12 +15,10 @@ class StockListView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        # Update stock prices and additional info from API
         stocks_info = []
         for stock in context['stocks']:
-            stock_info = get_stock_data(stock.symbol, stock.id)  # Fetch real-time stock data
+            stock_info = get_stock_data(stock.symbol, stock.id)  
             if stock_info:
-                # Adding real-time data to each stock object in context
                 stock.current_price = stock_info['current_price']
                 stock.market_cap = stock_info['market_cap']
                 stock.high_52_week = stock_info['high_52_week']
@@ -35,7 +32,7 @@ class StockListView(ListView):
         context['stocks_info'] = stocks_info
         return context
 
-# Detail view for a single stock
+
 class StockDetailView(DetailView):
     model = Stock
     template_name = 'stock_detail.html'
@@ -45,7 +42,6 @@ class StockDetailView(DetailView):
         context = super().get_context_data(**kwargs)
         context['price_history'] = StockPriceHistory.objects.filter(stock=self.object)
 
-        # Fetch real-time stock data for details view
         stock_info = get_stock_data(self.object.symbol, self.object.id)
         if stock_info:
             context['current_price'] = stock_info['current_price']
@@ -53,7 +49,7 @@ class StockDetailView(DetailView):
             context['high_52_week'] = stock_info['high_52_week']
             context['low_52_week'] = stock_info['low_52_week']
 
-            # Include the additional price change data
+
             context['change_1d'] = stock_info.get('change_1d', None)
             context['change_1w'] = stock_info.get('change_1w', None)
             context['change_1m'] = stock_info.get('change_1m', None)
@@ -61,11 +57,10 @@ class StockDetailView(DetailView):
 
         return context
 
-# View to get stock data in JSON format
 def get_stock_data_view(request, stock_id):
     try:
-        stock = get_object_or_404(Stock, id=stock_id)  # Retrieve stock by ID
-        stock_info = get_stock_data(stock.symbol, stock_id)  # Fetch data from get_stock_data
+        stock = get_object_or_404(Stock, id=stock_id)  
+        stock_info = get_stock_data(stock.symbol, stock_id)  
         
         if stock_info:
             return JsonResponse({
@@ -84,14 +79,13 @@ def get_stock_data_view(request, stock_id):
     except Stock.DoesNotExist:
         return JsonResponse({'error': 'Stock not found'}, status=404)
 
-# View to get stock history data
 def get_stock_history(request, stock_id):
     try:
-        stock = get_object_or_404(Stock, id=stock_id)  # Handle Stock not found using get_object_or_404
-        price_history = stock.price_history.all()  # Assuming there is a related price history field
+        stock = get_object_or_404(Stock, id=stock_id) 
+        price_history = stock.price_history.all()  
         data = [
             {
-                'date': history.date.strftime('%Y-%m-%d'),  # Format date
+                'date': history.date.strftime('%Y-%m-%d'),  
                 'price': history.price
             }
             for history in price_history

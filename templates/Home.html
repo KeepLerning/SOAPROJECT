@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home NASDAQ 100</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <style>
         body {
             font-family: 'Poppins', sans-serif;
@@ -13,6 +14,43 @@
             background: linear-gradient(135deg, #0d0d0d, #1f1f1f);
             color: #e0e0e0;
         }
+
+        .crypto-info {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 30px;
+        margin-left: 90px;
+        font-size: 14px;
+        color: #4A90E2; /* Warna biru untuk teks utama */
+    }
+
+.crypto-item {
+    display: inline-block;
+    margin-right: 20px;
+}
+
+.percentage {
+    font-weight: bold;
+}
+
+.green {
+    color: #4CAF50; /* Warna hijau untuk persentase positif */
+}
+
+.blue {
+    color: #4A90E2; /* Warna biru untuk teks utama */
+}
+
+.crypto-info span {
+    display: inline-block;
+}
+        @media (max-width: 768px) {
+    .crypto-info {
+        flex-direction: column; /* Menyusun elemen secara vertikal di layar kecil */
+    }
+}
+
 
         header {
             text-align: center;
@@ -36,7 +74,7 @@
             gap: 40px;
             padding: 0;
             margin-top: 20px;
-            margin-right: 100px;
+            margin-right: 150px;
         }
 
         nav a {
@@ -46,6 +84,9 @@
             padding: 10px 20px;
             transition: all 0.3s ease;
             border-radius: 4px;
+        }
+        nav a i {
+            margin-right: 8px; /* Menambah jarak antara ikon dan teks */
         }
 
         nav a:hover {
@@ -77,6 +118,26 @@
 
         .login-button:hover {
             background: rgba(0, 255, 257, 0.3);
+            transform: scale(1.1);
+        }
+
+        .logout-button {
+            background-color: #f44336;
+            border: none;
+            color: white;
+            margin-top: 3px;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+            position: absolute;
+            right: 110px;
+            top: 20px;
+            box-shadow: 0 0 10px rgba(244, 67, 54, 0.5);
+        }
+
+        .logout-button:hover {
+            background-color: #c62828;
             transform: scale(1.1);
         }
 
@@ -299,21 +360,35 @@
 </head>
 <body>
     {% load static %}
+<div class="crypto-info">
+    <span class="crypto-item">Cryptos: 2.4M+</span>
+    <span class="crypto-item">Exchanges: 762</span>
+    <span class="crypto-item">Market Cap: $3.3T <span class="percentage green">+3.7%</span></span>
+    <span class="crypto-item">24h Vol: $243B <span class="percentage green">+22.51%</span></span>
+    <span class="crypto-item">Dominance: BTC: 59.3% ETH: 12.3%</span>
+    <span class="crypto-item">ETH Gas: 8.01 Gwei</span>
+    <span class="crypto-item">Fear & Greed: 88/100</span>
+</div>
     <header>
         {% comment %} <a href="/" class="navbar-logo"><img src="static/img/logo.png" alt="Logo" /></a> {% endcomment %}
         <h1>Welcome to NASDAQ 100 Stocks Monitoring App</h1>
         <nav>
-            <ul>
-                <li><a href="{% url 'home' %}">Home</a></li>
-                <li><a href="{% url 'dashboard' %}">Dashboard</a></li>
-                <li><a href="{% url 'watchlist' %}">Watchlist</a></li>
-                <li><a href="{% url 'alerts' %}">Alerts</a></li>
-                <li><a href="{% url 'news' %}">News</a></li>
-                <form action="{% url 'login' %}">
-                    <button class="login-button">Login</button>
-                </form>
-            </ul>
-        </nav>
+    <ul>
+        <li><a href="{% url 'home' %}"><i class="fas fa-home"></i> Home</a></li>
+        <li><a href="{% url 'dashboard' %}"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+        <li><a href="{% url 'watchlist' %}"><i class="fas fa-eye"></i> Watchlist</a></li>
+        <li><a href="{% url 'alerts' %}"><i class="fas fa-bell"></i> Alerts</a></li>
+        <li><a href="{% url 'news' %}"><i class="fas fa-newspaper"></i> News</a></li>
+        <form action="{% url 'login' %}">
+            <button class="login-button"><i class="fas fa-sign-in-alt"></i> Login</button>
+        </form>
+        <form action="{% url 'logout' %}" method="post">
+            {% csrf_token %}
+            <button type="submit" class="logout-button"><i class="fas fa-sign-in-alt"></i></button>
+        </form>
+    </ul>
+</nav>
+
     </header>
 
     <main>
