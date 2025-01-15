@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -82,14 +83,15 @@ WSGI_APPLICATION = 'PORTOFOLIO.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME':'db.portofolio',
-        'USER':'root',
-        'PASSWORD':'',
-        'HOST':'localhost',
-        'PORT':'3307',
+        'ENGINE': 'django.db.backends.postgresql',  # Pastikan ini ada
+        'NAME': os.environ.get('DB_NAME', 'postgres'),  # Nama database
+        'USER': os.environ.get('DB_USER', 'postgres'),  # Nama pengguna
+        'PASSWORD': os.environ.get('DB_PASSWORD', '12345678'),  # Kata sandi
+        'HOST': 'postgres_db',  # Service name in docker-compose
+        'PORT': '5432',  # Port database
     }
 }
+
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
 
@@ -126,8 +128,11 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
 STATICFILES_DIRS = [
-    BASE_DIR /'static',
+    os.path.join(BASE_DIR, 'static'),
+
     
 
 ]
@@ -145,3 +150,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+# Pengaturan untuk file media
+MEDIA_URL = "/media/"
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
