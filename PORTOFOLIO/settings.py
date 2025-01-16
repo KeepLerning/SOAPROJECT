@@ -27,7 +27,7 @@ SECRET_KEY = 'django-insecure-&@8z*^j($rdi5a6+^37n7oygk%2y3%th7wji+z$)pr2=!jwy3h
 DEBUG = True
 
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0']
 
 # Application definition
 
@@ -45,6 +45,11 @@ INSTALLED_APPS = [
     'Alerts',
     'News', 
     'django.contrib.humanize',
+
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.github',
 ]
 
 MIDDLEWARE = [
@@ -55,6 +60,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'allauth.account.middleware.AccountMiddleware',
 ]
 
 ROOT_URLCONF = 'PORTOFOLIO.urls'
@@ -132,14 +138,40 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
-
-    
-
 ]
 
-LOGIN_URL = '/login/'  # Ganti dengan URL login Anda
-LOGIN_REDIRECT_URL = '/dashboard/'  # Ganti dengan URL dashboard Anda
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend',
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend',
 
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend', #DEFAULT BACKEND
+    'allauth.account.auth_backends.AuthenticationBackend', # GOOGLE
+]
+
+# LOGIN OAUTH
+SOCIALACCOUNT_PROVIDERS = {
+    'github':{
+        'APP':{
+            'client_id': 'Ov23liQTmCiVWBhxZDhc',
+            'secret': '2c93bb0aa1117ce517e233c28a2483a229468686',
+        }
+    },
+    'discord':{
+        'APP':{
+            'client_id': '1329290560640647288',
+            'secret': 'iEaUNvRltP9vMZN_tkhLt1Ro4aHSycvl',
+        }
+    }
+}
+
+SOCIALACCOUNT_LOGIN_ON_GET = False
+
+LOGIN_URL = '/login/?'  # Ganti dengan URL login Anda
+LOGOUT_URL = '/Home'
+LOGIN_REDIRECT_URL = '/dashboard/'  # Ganti dengan URL dashboard Anda
+ACCOUNT_LOGOUT_REDIRECT_URL = 'login'
+
+SITE_ID = 2
 
 MEDIA_ROOT = BASE_DIR / 'media'
 

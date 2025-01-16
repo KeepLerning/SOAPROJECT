@@ -382,10 +382,6 @@
         <form action="{% url 'login' %}">
             <button class="login-button"><i class="fas fa-sign-in-alt"></i> Login</button>
         </form>
-        <form action="{% url 'logout' %}" method="post">
-            {% csrf_token %}
-            <button type="submit" class="logout-button"><i class="fas fa-sign-in-alt"></i></button>
-        </form>
     </ul>
 </nav>
 

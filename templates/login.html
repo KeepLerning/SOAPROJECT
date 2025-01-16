@@ -1,4 +1,5 @@
 {% load static %}
+{% load socialaccount%}
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -6,6 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login NASDAQ 100</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <style>
         body {
             font-family: 'Poppins', sans-serif;
@@ -17,6 +19,10 @@
             justify-content: center;
             align-items: center;
             height: calc(100vh - 120px);
+        }
+
+        i{
+            padding-right: 10px;
         }
 
         .login-container {
@@ -72,12 +78,31 @@
             cursor: pointer;
             transition: all 0.3s ease;
             width: 100%;
+            margin-bottom: 10px;
         }
 
         .login-button:hover {
             background-color: #ff00c1;
             transform: scale(1.05);
             box-shadow: 0 0 10px #ff00c1, 0 0 20px #ff00c1;
+        }
+
+        .github-login {
+            background-color: white;
+            color: black;
+            padding: 10px;
+            border-radius: 5px;
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .github-login:hover {
+            background-color:rgb(255, 255, 255);
+            transform: scale(1.05);
+            box-shadow: 0 0 10px rgb(230, 230, 230), 0 0 20px rgb(152, 152, 152);
         }
 
         .register-link {
@@ -114,8 +139,9 @@
                 <label for="password">Password:</label>
                 <input type="password" name="password" id="password" required>
             </div>
-            <button type="submit" class="login-button">Login</button>
+            <button type="submit" class="login-button"><i class="fa-solid fa-user"></i>Login</button>
         </form>
+        <button class="github-login" onclick="location.href='{% provider_login_url 'github' %}'"><i class="fa-brands fa-discord"></i>Login dengan GitHub</button>
         <p class="register-link">Belum punya akun? <a href="{% url 'register' %}">Daftar di sini</a></p>
     </div>
 </body>

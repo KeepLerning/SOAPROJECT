@@ -11,6 +11,7 @@ urlpatterns = [
     # path('grappelli/', include('grappelli.urls')), 
     path('admin/', admin.site.urls),
     path('login/', login_view, name='login'),
+    path('accounts/', include("allauth.urls")),
     path('logout/', logout_view, name='logout'),
     path('register/', register_view, name='register'),
     path('stocks/', include('Stock_Data.urls')),
