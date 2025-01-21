@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.github',
+    'allauth.socialaccount.providers.facebook',
 ]
 
 MIDDLEWARE = [
@@ -156,20 +157,17 @@ SOCIALACCOUNT_PROVIDERS = {
             'secret': '2c93bb0aa1117ce517e233c28a2483a229468686',
         }
     },
-    'discord':{
-        'APP':{
-            'client_id': '1329290560640647288',
-            'secret': 'iEaUNvRltP9vMZN_tkhLt1Ro4aHSycvl',
-        }
-    }
 }
 
-SOCIALACCOUNT_LOGIN_ON_GET = False
+SOCIALACCOUNT_LOGIN_ON_GET = True
+
+ACCOUNT_LOGOUT_ON_GET = False
+ACCOUNT_LOGIN_ON_PASSWORD_RESET = True
 
 LOGIN_URL = '/login/?'  # Ganti dengan URL login Anda
 LOGOUT_URL = '/Home'
 LOGIN_REDIRECT_URL = '/dashboard/'  # Ganti dengan URL dashboard Anda
-ACCOUNT_LOGOUT_REDIRECT_URL = 'login'
+ACCOUNT_LOGOUT_REDIRECT_URL = '/'
 
 SITE_ID = 2
 

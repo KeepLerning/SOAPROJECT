@@ -5,6 +5,7 @@ from Stock_Data.models import Stock
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from Stock_Data.utils import get_stock_data
+from django.http import JsonResponse
 
 # Daftar watchlist pengguna dengan harga real-time
 @method_decorator(login_required, name='dispatch')

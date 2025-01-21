@@ -3,6 +3,7 @@ from django.views.generic import ListView, DetailView
 from django.http import JsonResponse
 from .models import Stock, StockPriceHistory
 from .utils import get_stock_data 
+from django.shortcuts import render
 
 class StockListView(ListView):
     model = Stock
@@ -93,3 +94,4 @@ def get_stock_history(request, stock_id):
         return JsonResponse({'price_history': data})
     except Stock.DoesNotExist:
         return JsonResponse({'error': 'Stock not found'}, status=404)
+

@@ -220,7 +220,7 @@
                 <li><a href="{% url 'alerts' %}"><i class="fas fa-bell"></i> Alerts</a></li>
                 <li><a href="{% url 'news' %}"><i class="fas fa-newspaper"></i> Berita</a></li>
             </ul>
-            <form action="{% url 'logout' %}" method="post">
+            <form action="{% url 'account_logout' %}" method="post">
                 {% csrf_token %}
                 <button type="submit" class="logout-button"><i class="fas fa-sign-out-alt"></i></button>
             </form>

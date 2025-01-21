@@ -1,0 +1,82 @@
+{% load static %} {% load socialaccount%} {% providers_media_js %}
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Logout NASDAQ 100</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        font-family: "Poppins", sans-serif;
+        margin: 0;
+        padding: 60px 20px;
+        background: linear-gradient(135deg, #0d0d0d, #1f1f1f);
+        color: #e0e0e0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: calc(100vh - 120px);
+      }
+
+      .logout-container {
+        background-color: rgba(255, 255, 255, 0.1);
+        padding: 30px;
+        border-radius: 8px;
+        box-shadow: 0 0 15px rgba(0, 255, 247, 0.3);
+        text-align: center;
+        width: 300px;
+        animation: fadeIn 1s ease-in-out;
+      }
+
+      h1 {
+        color: #00f7ff;
+        margin-bottom: 20px;
+      }
+
+      .message {
+        margin-bottom: 20px;
+      }
+
+      .login-link {
+        margin-top: 15px;
+        color: #e0e0e0;
+      }
+
+      .login-link a {
+        color: #00f7ff;
+        text-decoration: none;
+        transition: color 0.3s;
+      }
+
+      .login-link a:hover {
+        color: #ff00c1;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="logout-container">
+      <h1>Logout Berhasil</h1>
+      <div class="message">Anda telah berhasil keluar dari akun Anda.</div>
+      <p class="login-link">
+        Kembali ke <a href="{% url 'login' %}">Halaman Login</a>
+      </p>
+    </div>
+  </body>
+</html>

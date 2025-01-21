@@ -4,8 +4,8 @@ import os
 
 def get_usd_to_idr_rate():
     # API key dari environment variable atau default key jika tidak ada
-    api_key = os.getenv('EXCHANGE_RATE_API_KEY', 'd36eee9bd214d4788bfcb2c5')  
-    url = f'https://v6.exchangerate-api.com/v6/{api_key}/latest/USD'
+    api_key = os.getenv('EXCHANGE_RATE_API_KEY', '7fa1f9e5559b4785d7f33210')  
+    url = f'https://v6.exchangerate-api.com/v6/7fa1f9e5559b4785d7f33210/latest/USD'
 
     try:
         response = requests.get(url)
